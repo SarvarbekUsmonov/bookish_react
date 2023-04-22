@@ -43,7 +43,7 @@ const period = 3000000;
 // authentication
 function authenticate(req, res, next) {
     // we can more pages depending on when we want the user to create an account
-    if (req.baseUrl === "/index.html"  req.baseUrl === "/signUp.html"  req.baseUrl === "/help.html") {
+    if (req.baseUrl === "/index.html" || req.baseUrl === "/signUp.html" || req.baseUrl === "/help.html") {
         next();
         return;
     }
