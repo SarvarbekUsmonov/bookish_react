@@ -2,6 +2,7 @@ import Home from "./Home"
 import View from './View'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./Login";
+import Search from "./Search";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path='/view' element = {<View/>} />
           <Route path='/login' element = {<Login/>} />
+          <Route path="/search" element= {<Search/>}/>
         </Routes>
       </div>
     </Router>
