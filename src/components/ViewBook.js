@@ -1,11 +1,13 @@
-function viewBook() {
+function ViewBook () {
     return (
         <div className="container">
           <div className="card mb-3" style={{maxWidth: "auto"}}>
               <div className="row">
+                  
                   <div className="col-md-3">
                       <img src="https://m.media-amazon.com/images/I/41K8NV99juL.jpg" className="img-fluid rounded-start" alt="..."></img>
                   </div>
+                  
                   <div className="col-md-8">
                       <div className="card-body">
                           <h5 className="card-title">Name of The Book</h5>
@@ -35,4 +37,4 @@ function viewBook() {
     )
 }
 
-export default viewBook
+export default ViewBook
