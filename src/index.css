@@ -12,7 +12,7 @@ code {
     monospace;
 }
 
-body{
+#body-home{
   margin: 0;
   height: 200vh;
 }
@@ -97,10 +97,35 @@ nav{
 }
 
 
-.avatar {
-  width: 50%;
-  height: auto;
-  object-fit: cover;
+
+#main-search{
+  display: flex;
+  height: 100vh;
 }
+
+#filter{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  background-color: lavender;
+  padding-left: auto;
+  padding-right: auto;
+}
+
+
+
+
+#searchForm{
+  margin-top: 20%;
+}
+
+
+#content{
+  flex: 2;
+  overflow-y: scroll;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 
 
