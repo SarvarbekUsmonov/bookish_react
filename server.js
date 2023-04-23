@@ -129,7 +129,106 @@ app.post('/post', async (req, res) => {
     res.sendStatus(200)
 })
 
-app.listen(port, () => console.log(`Server is running on port http://localhost:${port}`));
+// route for getting all books based on the title
+app.get('/books/:title', async (req, res) => {
+    const title = req.params.title;
+    const books = await Books.find({title: {$regex: title, $options: 'i'}}).exec();
+    res.send(books);
+    console.log(books);
+    console.log(title);
+})
 
-/*
-Akbarali  end*/
+// route for getting all books based on the author
+app.get('/books/:author', async (req, res) => {
+    const author = req.params.author
+    const books = await Books.find({title: {$regex: title, $options: 'i'}}).exec();
+    res.send(books)
+})
+
+// route for getting all books based on the year
+app.get('/books/:year', async (req, res) => {
+    const year = req.params.year
+    const books = await Books.find({year: year}).exec();
+    res.send(books)
+    console.log(books);
+})
+// route for getting all books based on the genre
+app.get('/books/:genre', async (req, res) => {
+    const genre = req.params.genre
+    const books = await Books.find({genre: genre}).exec();
+    res.send(books)
+    console.log(books);
+})
+
+// route for getting all books based on the description
+
+app.get('/books/:description', async (req, res) => {
+    const description = req.params.description
+    const books = await Books.find({description: description}).exec();
+    res.send(books)
+    console.log(books);
+})
+
+// route for getting all books of the user
+
+app.get('/mybooks/', async (req, res) => {
+    const user = req.cookies.login.username;
+    const books = await Books.find({user: user}).exec();
+    res.send(books)
+    console.log(books);
+})
+
+// route for getting all comments of the particular book
+
+app.get('/comments/:bookId', async (req, res) => {
+    const bookId = req.params.bookId;
+    const comments = await Comments.find({book: bookId}).exec();
+    res.send(comments)
+    console.log(comments);
+})
+
+// route for changing the avatr of the user
+app.post('/update/avatar', upload.single('newAvatar'), (req, res) => {
+    const username = req.cookies.login.username;
+    const fileName = req.file.filename;
+    Users.updateOne({username}, {avatar: fileName}).exec();
+    res.redirect('/settings.html');
+});
+
+// post to change the password
+app.post('/update/password', async (req, res) => {
+    const username = req.cookies.login.username;
+    const { oldPassword, newPassword } = req.body;
+
+    const response = await Users.findOne({username}).exec();
+    
+    // verify old password
+    var hash = crypto.createHash('sha3-256');
+    var toHash = oldPassword + response.salt;
+    dataa = hash.update(toHash, 'utf-8');
+    hashed = dataa.digest('hex');
+
+    // stop if the old password is incorrect
+    if (hashed !== response.hash) {
+        console.log('incorrect password');
+        res.sendStatus(404);
+        return;
+    }
+
+    // hash the new password
+    hash = crypto.createHash('sha3-256');
+    let salt = Math.floor(Math.random() * 1000000);
+    toHash = newPassword + salt;
+    data = hash.update(toHash, 'utf-8');
+    let gen_hash = data.digest('hex');
+    Users.updateOne({username}, {salt, hash: gen_hash}).exec();
+    res.sendStatus(200)
+
+});
+// route for clearing the cookies
+app.post('/clear/cookies', (req, res) => {
+    res.clearCookie('login');
+    res.sendStatus(200);
+});
+
+app.listen(port, () => console.log(`Server is running on port http://localhost:${port}`));
