@@ -2,8 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser');
 const multer = require('multer')
+const cors = require('cors');
+
 const app = express();
 const port = 4000;
+
+app.use(cors());
+app.use(bodyParser.json());
+
 
 
 const storage = multer.diskStorage({
@@ -151,11 +157,18 @@ app.post('/login', async (req, res) => {
 })
 // route for posting a book
 app.post('/post', async (req, res) => {
-    const {title, author, year, genre, description, image} = req.body;
-    const user = req.cookies.login.username;
+    console.log(req.body)
+    const user = 'Nurkhat'
+
+    const title = req.body.title;
+    const author = req.body.author;
+    const year = req.body.year;
+    const genre = req.body.genre;
+    const description = req.body.description;
+    const image =req.body.image;
+    
     const book = new Books({title, author, comments: [], rating: [], year, genre, description, image, user});
     await book.save();
-    res.sendStatus(200)
 })
 
 // route for getting all books based on the title
