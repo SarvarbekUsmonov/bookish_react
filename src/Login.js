@@ -8,7 +8,7 @@ function Login(){
     async function handleLoginAccount(){
         const username = usernameRef.value
         const password = passwordRef.value
-        const response = await fetch('http://localhost:3000/login', {
+        const response = await fetch('http://localhost:4000/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ function Login(){
         }else{
             window.location.href = "./index.html"
         }
-        
+
     }
     return(
         // create a form for the user to login
@@ -37,7 +37,7 @@ function Login(){
                 <input type="password" name="password" id="loginPassword" ref={passwordRef} placeholder="Enter Password Here" required></input>
                 <button id="loginBtn" type="button" onClick = {handleLoginAccount}>Log in</button>
             </form>
-            <a href="./SignUp.html">Don't have an account? Sign up here.</a>
+            <a href="./SignUp">Don't have an account? Sign up here.</a>
             <div id="copyrightDate">2023</div>
         </div>
     )

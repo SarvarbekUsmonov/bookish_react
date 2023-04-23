@@ -1,4 +1,6 @@
 const express = require('express');
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser');
 const app = express();
 const port = 4000;
 
@@ -8,6 +10,9 @@ app.get('/', (req, res) => {
 
 let Users = mongoose.model("Users", usersSchema);
 
+const usersSchema = new Schema({
+
+})
 const booksSchema = new Schema({
     title: String,
     author: String,
