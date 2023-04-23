@@ -10,17 +10,22 @@ function Post(){
   const refDesc = useRef(null);
 
 
-
-
-    useEffect(()=>{
-      fetch("/postBook", {
-        method: "POST",
-        headers: {
-          'Content-Type' : "application/json"
-        },
-        body: JSON.stringify(refTitle.current.value, refAuthor, refYear, refGenre, refDesc, refImg)
+  function post(){
+    fetch("http://localhost:4000/post", {
+      method: "POST",
+      headers: {
+        'Content-Type' : "application/json"
+      },
+      body: JSON.stringify({
+        title: refTitle.current.value,
+        author: refAuthor.current.value,
+        year: parseInt(refYear.current.value),
+        genre: refGenre.current.value,
+        description: refDesc.current.value,
+        image: refImg.current.value
       })
-    }, [])
+    })
+  }
   return(
     <form>
         <label for="title">Title</label>
@@ -38,8 +43,8 @@ function Post(){
         <input ref={refGenre} type="text" name="genre" id="genre" placeholder="genre" required></input>
 
         <label>Image:</label>
-        <input ref={refImg} type="file" accept="image/*" id="image" name="image"></input>
-        <button type="button" onClick={useEffect}>Post</button>
+        <input ref={refImg} type="input"></input>
+        <button type="button" onClick={post}>Post</button>
     </form>
   )
 }
