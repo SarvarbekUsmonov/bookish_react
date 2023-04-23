@@ -1,16 +1,43 @@
 const express = require('express');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser');
+const multer = require('multer')
 const app = express();
 const port = 4000;
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, __dirname + '/private_html/image')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  });
+  const upload = multer({ storage: storage });
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+const mongoURL = 'mongodb://127.0.0.1:27017/bookish';
+mongoose.connect(mongoURL, { useNewUrlParser: true });
+mongoose.connection.on("connected", () => console.log("Connected to MongoDB"))
+mongoose.connection.on("error", (err) => console.log(err))
+
+const usersSchema = new mongoose.Schema({
+    username: String,
+    salt: Number,
+    hash: String,
+    favorites: [mongoose.ObjectId],
+    listings: [mongoose.ObjectId],
+    avatar: String
+})
+
 let Users = mongoose.model("Users", usersSchema);
 
-const booksSchema = new Schema({
+
+const booksSchema = new mongoose.Schema({
     title: String,
     author: String,
     comments: [mongoose.ObjectId],
@@ -24,7 +51,7 @@ const booksSchema = new Schema({
 
 let Books = mongoose.model("Books", booksSchema);
 
-const commentsSchema = new Schema({
+const commentsSchema = new mongoose.Schema({
     user: mongoose.ObjectId,
     rating: Number,
     comment: String,
