@@ -28,13 +28,9 @@ function ViewBook(props) {
               display: "flex",
               marginTop: "100px",
               marginBottom: "100px",
-            //   marginLeft: "50%",
+              marginLeft: "50%",
               justifyContent: "space-between",}}>
            <Spinner name="circle" style={{ width: 100, height: 100 }} />
-           <Spinner name="cube-grid" style={{ width: 100, height: 100 }} />
-           <Spinner name="wave" color="coral" style={{ width: 100, height: 100 }} />
-           <Spinner name="wandering-cubes" style={{ width: 100, height: 100 }} />
-           <Spinner name="rotating-plane" style={{ width: 100, height: 100 }} />
         </div>
      );
   }
