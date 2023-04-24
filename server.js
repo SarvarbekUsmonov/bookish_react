@@ -272,4 +272,15 @@ app.post('/clear/cookies', (req, res) => {
     res.sendStatus(200);
 });
 
+app.get('/viewBookData/:bookId', (req, res) => {
+    const bookId = req.params.bookId;
+
+    Books.find({author: bookId }).then((data) => {
+        res.send(JSON.stringify(data));
+    }).catch((err) => {
+        console.log(err);
+        res.send({"data": 'Error'});
+    });
+});
+
 app.listen(port, () => console.log(`Server is running on port http://localhost:${port}`));
