@@ -1,37 +1,29 @@
+// importing all necessary modules
 const express = require('express');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser');
 const multer = require('multer')
-const cors = require('cors');
+
 
 const app = express();
 const port = 4000;
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cookieParser())
+app.use("/*.html", authenticate);
+app.use(express.static('public_html'));
+app.use(express.json());
 
-
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, __dirname + '/private_html/image')
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname)
-    }
-  });
-  const upload = multer({ storage: storage });
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-const mongoURL = 'mongodb://127.0.0.1:27017/bookish';
+// connection to the database
+const mongoURL = 'mongodb://127.0.0.1:27017/quizzy';
 mongoose.connect(mongoURL, { useNewUrlParser: true });
 mongoose.connection.on("connected", () => console.log("Connected to MongoDB"))
 mongoose.connection.on("error", (err) => console.log(err))
 
-const usersSchema = new mongoose.Schema({
+// writing schemas for the database
+const Schema = mongoose.Schema;
+
+
+const usersSchema = new Schema({
     username: String,
     salt: Number,
     hash: String,
@@ -77,8 +69,8 @@ const period = 3000000;
 
 // authentication
 function authenticate(req, res, next) {
-    // we can more pages depending on when we want the user to create an account
-    if (req.baseUrl === "/index.html" || req.baseUrl === "/signUp.html" || req.baseUrl === "/help.html") {
+    // we can add more pages depending on when we want the user to create an account
+    if (req.baseUrl === "/Index" || req.baseUrl === "/Search" || req.baseUrl === "/View") {
         next();
         return;
     }
@@ -158,7 +150,7 @@ app.post('/login', async (req, res) => {
 // route for posting a book
 app.post('/post', async (req, res) => {
     console.log(req.body)
-    const user = 'Nurkhat'
+    const user = req.cookies.login;
 
     const title = req.body.title;
     const author = req.body.author;
