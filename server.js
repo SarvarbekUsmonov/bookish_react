@@ -279,7 +279,7 @@ app.get('/books/:title', async (req, res) => {
 // route for getting all books based on the author
 app.get('/books/:author', async (req, res) => {
     const author = req.params.author
-    const books = await Books.find({title: {$regex: title, $options: 'i'}}).exec();
+    const books = await Books.find({title: {$regex: author, $options: 'i'}}).exec();
     res.send(books)
 })
 
@@ -343,8 +343,8 @@ app.post('/update/password', async (req, res) => {
     // verify old password
     var hash = crypto.createHash('sha3-256');
     var toHash = oldPassword + response.salt;
-    dataa = hash.update(toHash, 'utf-8');
-    hashed = dataa.digest('hex');
+    const dataa = hash.update(toHash, 'utf-8');
+    const hashed = dataa.digest('hex');
 
     // stop if the old password is incorrect
     if (hashed !== response.hash) {
@@ -357,7 +357,7 @@ app.post('/update/password', async (req, res) => {
     hash = crypto.createHash('sha3-256');
     let salt = Math.floor(Math.random() * 1000000);
     toHash = newPassword + salt;
-    data = hash.update(toHash, 'utf-8');
+    let data = hash.update(toHash, 'utf-8');
     let gen_hash = data.digest('hex');
     Users.updateOne({username}, {salt, hash: gen_hash}).exec();
     res.sendStatus(200)
