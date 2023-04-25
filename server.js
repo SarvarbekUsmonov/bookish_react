@@ -268,7 +268,7 @@ app.get('/books/:title', async (req, res) => {
 // route for getting all books based on the author
 app.get('/books/:author', async (req, res) => {
     const author = req.params.author
-    const books = await Books.find({title: {$regex: title, $options: 'i'}}).exec();
+    const books = await Books.find({author: {$regex: author, $options: 'i'}}).exec();
     res.send(books)
 })
 
