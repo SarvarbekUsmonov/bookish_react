@@ -2,8 +2,19 @@
 const express = require('express');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const multer = require('multer')
 const cors = require('cors');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, __dirname + '/private_html/image')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+});
+const upload = multer({ storage: storage });
 
 const app = express();
 const port = 4000;
@@ -356,6 +367,17 @@ app.post('/update/password', async (req, res) => {
 app.post('/clear/cookies', (req, res) => {
     res.clearCookie('login');
     res.sendStatus(200);
+});
+
+app.get('/viewBookData/:bookId', (req, res) => {
+    const bookId = req.params.bookId;
+
+    Books.find({author: bookId }).then((data) => {
+        res.send(JSON.stringify(data));
+    }).catch((err) => {
+        console.log(err);
+        res.send({"data": 'Error'});
+    });
 });
 
 app.listen(port, () => console.log(`Server is running on port http://localhost:${port}`));

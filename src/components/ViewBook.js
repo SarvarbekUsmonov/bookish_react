@@ -12,9 +12,7 @@ function ViewBook(props) {
         .then((response) => response.json())
         .then((data) => {
           setData(data);
-          // Comment out or remove the following line to keep the Loader running
-          // setLoading(false);
-          loading = false;
+          setLoading(false);
           console.log(data); // log the fetched data
         })
         .catch((error) => console.error(error));
@@ -34,6 +32,19 @@ function ViewBook(props) {
         </div>
      );
   }
+  
+  const renderStars = (rating) => {
+    let stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <i
+          key={i}
+          className={`bi ${i <= rating ? "bi-star-fill" : "bi-star"}`}
+        ></i>
+      );
+    }
+    return stars;
+  };
 
   return (
     <div className="container">
@@ -50,24 +61,8 @@ function ViewBook(props) {
             <div className="card-body">
               <h5 className="card-title">Name of The Book</h5>
               <div className="form-group">
-                <label for="">Rating</label>
-                <div className="">
-                  <span className="star" data-value="1">
-                    <i className="bi bi-star"></i>
-                  </span>
-                  <span className="star" data-value="2">
-                    <i className="bi bi-star"></i>
-                  </span>
-                  <span className="star" data-value="3">
-                    <i className="bi bi-star"></i>
-                  </span>
-                  <span className="star" data-value="4">
-                    <i className="bi bi-star"></i>
-                  </span>
-                  <span className="star" data-value="5">
-                    <i className="bi bi-star"></i>
-                  </span>
-                </div>
+                <label htmlFor="">Rating</label>
+                <div className="">{renderStars(data.rating)}</div>
               </div>
               <p className="card-text">{data.title}</p>
               <p className="card-text">
@@ -88,7 +83,7 @@ function ViewBook(props) {
         </div>
       </div>
     </div>
-  );
+  );  
 }
 
 export default ViewBook;
