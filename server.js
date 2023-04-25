@@ -176,11 +176,16 @@ app.post('/post', async (req, res) => {
 })
 // 4/24/2023
 // route for getting the book based on the id of the book as a JSON object
-app.get('/viewBookData/:id', async (req, res) => {
-    const id = req.params.id;
-    const book = await Books.findById(id).exec();
-    res.send(book);
-})
+app.get('/viewBookData/:bookId', (req, res) => {
+    const bookId = req.params.bookId;
+
+    Books.find({author: bookId }).then((data) => {
+        res.send(JSON.stringify(data));
+    }).catch((err) => {
+        console.log(err);
+        res.send({"data": 'Error'});
+    });
+});
 // route for getting the comments based on the id of the book as a list of JSON objects, which contains
 // the avatar of the user, author, rating, comment and comment Id
 app.get('/getCommentInfo/:id', async (req, res) => {
@@ -279,7 +284,7 @@ app.get('/books/:title', async (req, res) => {
 // route for getting all books based on the author
 app.get('/books/:author', async (req, res) => {
     const author = req.params.author
-    const books = await Books.find({author: {$regex: author, $options: 'i'}}).exec();
+    const books = await Books.find({title: {$regex: title, $options: 'i'}}).exec();
     res.send(books)
 })
 
@@ -309,7 +314,7 @@ app.get('/books/:description', async (req, res) => {
 
 // route for getting all books of the user
 
-app.get('/mybooks', async (req, res) => {
+app.get('/mybooks/', async (req, res) => {
     const user = req.cookies.login.username;
     const books = await Books.find({user: user}).exec();
     res.send(books)
@@ -369,15 +374,5 @@ app.post('/clear/cookies', (req, res) => {
     res.sendStatus(200);
 });
 
-app.get('/viewBookData/:bookId', (req, res) => {
-    const bookId = req.params.bookId;
-
-    Books.find({author: bookId }).then((data) => {
-        res.send(JSON.stringify(data));
-    }).catch((err) => {
-        console.log(err);
-        res.send({"data": 'Error'});
-    });
-});
 
 app.listen(port, () => console.log(`Server is running on port http://localhost:${port}`));

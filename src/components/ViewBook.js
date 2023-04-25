@@ -8,7 +8,7 @@ function ViewBook(props) {
   useEffect(() => {
     // Simulate an asynchronous operation
     setTimeout(() => {
-      fetch(`https://localhost:4000/viewBookData/${props.id}`)
+      fetch(`http://127.0.0.1:4000/viewBookData/GRR`)
         .then((response) => response.json())
         .then((data) => {
           setData(data);
@@ -59,18 +59,18 @@ function ViewBook(props) {
           </div>
           <div className="col-md-8">
             <div className="card-body">
-              <h5 className="card-title">Name of The Book</h5>
+              <h5 className="card-title">{data[0].title}</h5>
               <div className="form-group">
                 <label htmlFor="">Rating</label>
-                <div className="">{renderStars(data.rating)}</div>
+                <div className="">{renderStars(data[0].rating)}</div>
               </div>
-              <p className="card-text">{data.title}</p>
+              <p className="card-text">{data[0].author}</p>
               <p className="card-text">
-                <q id="book-description-text">{data.desc}</q>
+                <q id="book-description-text">{data[0].description}</q>
               </p>
               <p className="card-text">
                 <small className="text-body-secondary">
-                  Published: {data.publishedDate}
+                  Published: {data[0].year}
                 </small>
               </p>
               <p className="card-text">
