@@ -309,7 +309,7 @@ app.get('/books/:description', async (req, res) => {
 
 // route for getting all books of the user
 
-app.get('/mybooks/', async (req, res) => {
+app.get('/mybooks', async (req, res) => {
     const user = req.cookies.login.username;
     const books = await Books.find({user: user}).exec();
     res.send(books)
