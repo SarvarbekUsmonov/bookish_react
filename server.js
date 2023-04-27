@@ -320,6 +320,53 @@ app.get('/mybooks/', async (req, res) => {
     res.send(books)
     console.log(books);
 })
+// route for returning 6 random books for recommendation
+app.get('/recommended', async (req, res) => {
+    const books = await Books.find().exec();
+    // make sure that there are no duplicates
+
+    const randomBooks = [];
+    if (books.length <= 6) {
+        res.send(books);
+        return;
+    }
+    while (randomBooks.length < 6) {
+        const randomBook = books[Math.floor(Math.random() * books.length)];
+        if (!randomBooks.includes(randomBook)) {
+            randomBooks.push(randomBook);
+        }
+    }
+    res.send(randomBooks);
+})
+// get the name of all authors as a list of json objects
+app.get('/getAuthors', async (req, res) => {
+    const authors = await Books.find().exec();
+    const authorNames = [];
+    for (let i = 0; i < authors.length; i++) {
+        if (!authorNames.includes(authors[i].author)) {
+            authorNames.push(authors[i].author);
+        }
+    }
+    res.send(authorNames);
+})
+// filter and return a list of JSON objects of books based on the author
+app.get('/filterAuthor/:author', async (req, res) => {
+    const author = req.params.author;
+    const books = await Books.find({author: author}).exec();
+    res.send(books);
+})
+// filter and return a list of JSON objects of books based on the year
+app.get('/filterYear/:year', async (req, res) => {
+    const year = req.params.year;
+    const books = await Books.find({year: year}).exec();
+    res.send(books);
+})
+// filter and return a list of JSON objects of books based on the genre
+app.get('/filterGenre/:genre', async (req, res) => {
+    const genre = req.params.genre;
+    const books = await Books.find({genre: genre}).exec();
+    res.send(books);
+})
 
 // route for getting all comments of the particular book
 
