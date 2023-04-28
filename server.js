@@ -179,7 +179,7 @@ app.post('/post', async (req, res) => {
 app.get('/viewBookData/:bookId', (req, res) => {
     const bookId = req.params.bookId;
 
-    Books.find({author: bookId }).then((data) => {
+    Books.find({_id: bookId }).then((data) => {
         res.send(JSON.stringify(data));
     }).catch((err) => {
         console.log(err);
