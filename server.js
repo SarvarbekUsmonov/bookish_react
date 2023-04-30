@@ -210,49 +210,63 @@ app.get('/getCommentInfo/:id', async (req, res) => {
 // and it has to return the number of likes for that comment
 // if it is already liked, then it should unlike it and return the number of likes
 app.post('/likeComment', async (req, res) => {
-    const commentId = req.body.commentId;
-    const userId = req.body.userId;
-    const comment = await Comments.findById(commentId).exec();
-    const likes = comment.likes;
-    // if the user has already liked the comment, then unlike it
-    if (likes.includes(userId)) {
-        const index = likes.indexOf(userId);
-        likes.splice(index, 1);
-        comment.likes = likes;
-        await comment.save();
-        res.send({likes: likes.length});
-    } else {
-        likes.push(userId);
-        comment.likes = likes;
-        await comment.save();
-        res.send({likes: likes.length});
+    const user = req.cookies.login;
+    if (!user){
+        res.redirect('/login.html');;
     }
+    else{
+        const commentId = req.body.commentId;
+        const userId = req.body.userId;
+        const comment = await Comments.findById(commentId).exec();
+        const likes = comment.likes;
+        // if the user has already liked the comment, then unlike it
+        if (likes.includes(userId)) {
+            const index = likes.indexOf(userId);
+            likes.splice(index, 1);
+            comment.likes = likes;
+            await comment.save();
+            res.send({likes: likes.length});
+        } else {
+            likes.push(userId);
+            comment.likes = likes;
+            await comment.save();
+            res.send({likes: likes.length});
+        }
+    }
+    
 })
 // post route, body of which contains the userId, rating and comment as a string, bookId 
 // returns JSon like {"added": true}, or {"added": false} if the user has already commented, the user
 // can only comment once
 app.post('/rateandcomment', async (req, res) => {
-    const userId = req.body.userId;
-    const rating = req.body.rating;
-    const comment = req.body.comment;
-    const bookId = req.body.bookId;
-    const book = await Books.findById(bookId).exec();
-    const comments = book.comments;
-    // check if the user has already commented
-    for (let i = 0; i < comments.length; i++) {
-        const comment = await Comments.findById(comments[i]).exec();
-        if (comment.user == userId) {
-            res.send({added: false});
-            return;
-        }
+    // check if the user has valid session
+    const user = req.cookies.login;
+    if (!user){
+        res.redirect('/login.html');;
     }
-    // if the user has not commented, then add the comment
-    const newComment = new Comments({user: userId, rating, comment, likes: []});
-    await newComment.save();
-    comments.push(newComment._id);
-    book.comments = comments;
-    await book.save();
-    res.send({added: true});
+    else{
+        const userId = req.body.userId;
+        const rating = req.body.rating;
+        const comment = req.body.comment;
+        const bookId = req.body.bookId;
+        const book = await Books.findById(bookId).exec();
+        const comments = book.comments;
+        // check if the user has already commented
+        for (let i = 0; i < comments.length; i++) {
+            const comment = await Comments.findById(comments[i]).exec();
+            if (comment.user == userId) {
+                res.send({added: false});
+                return;
+            }
+        }
+        // if the user has not commented, then add the comment
+        const newComment = new Comments({user: userId, rating, comment, likes: []});
+        await newComment.save();
+        comments.push(newComment._id);
+        book.comments = comments;
+        await book.save();
+        res.send({added: true});
+    }
 })
 // post route for favourting a book
 // body of the request contains the userId and the bookId
@@ -314,7 +328,7 @@ app.get('/books/:description', async (req, res) => {
 
 // route for getting all books of the user
 
-app.get('/mybooks/', async (req, res) => {
+app.get('/mybooks', async (req, res) => {
     const user = req.cookies.login.username;
     const books = await Books.find({user: user}).exec();
     res.send(books)
