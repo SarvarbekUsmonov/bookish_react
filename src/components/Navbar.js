@@ -1,11 +1,12 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Navbar(){
   const navBarReact = useRef(null); // create a ref using useRef hook
+  const [searchValue, setSearchValue] = useState("");
 
-  function search() {
-    alert(navBarReact.current.value); // access the ref using .current
-    
+  function handleSearchInputChange() {
+    setSearchValue(navBarReact.current.value);
   }
 
   return (
@@ -25,15 +26,15 @@ function Navbar(){
             type="search"
             placeholder="Search"
             aria-label="Search"
-            
+            onChange={handleSearchInputChange}
           ></input>
-          <button
+          <Link
             id="search-button"
             className="btn btn-outline-success mx-auto"
-            onClick={search}
+            to={`/search?input=${searchValue}`}
           >
             Search
-          </button>
+          </Link>
         </form>
         <img id="pfp-img" className="rounded mx-4 d-block" alt=""></img>
       </nav>
