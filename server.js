@@ -288,43 +288,20 @@ app.post('/favoriteBook', async (req, res) => {
 
 
 // route for getting all books based on the title
-app.get('/books/:title', async (req, res) => {
-    const title = req.params.title;
-    const books = await Books.find({title: {$regex: title, $options: 'i'}}).exec();
+app.get('/books/:input', async (req, res) => {
+    const input = req.params.input;
+    const books = await Books.find({
+      $or: [
+        { title: { $regex: input, $options: 'i' } },
+        { description: { $regex: input, $options: 'i' } },
+        { author: { $regex: input, $options: 'i' } }
+      ]
+    }).exec();
     res.send(books);
-    console.log(books);
-    console.log(title);
-})
-// route for getting all books based on the author
-app.get('/books/:author', async (req, res) => {
-    const author = req.params.author
-    const books = await Books.find({title: {$regex: title, $options: 'i'}}).exec();
-    res.send(books)
-})
+});
 
-// route for getting all books based on the year
-app.get('/books/:year', async (req, res) => {
-    const year = req.params.year
-    const books = await Books.find({year: year}).exec();
-    res.send(books)
-    console.log(books);
-})
-// route for getting all books based on the genre
-app.get('/books/:genre', async (req, res) => {
-    const genre = req.params.genre
-    const books = await Books.find({genre: genre}).exec();
-    res.send(books)
-    console.log(books);
-})
+  
 
-// route for getting all books based on the description
-
-app.get('/books/:description', async (req, res) => {
-    const description = req.params.description
-    const books = await Books.find({description: description}).exec();
-    res.send(books)
-    console.log(books);
-})
 
 // route for getting all books of the user
 
@@ -363,23 +340,119 @@ app.get('/getAuthors', async (req, res) => {
     }
     res.send(authorNames);
 })
-// filter and return a list of JSON objects of books based on the author
-app.get('/filterAuthor/:author', async (req, res) => {
+
+app.get('/filter/:author/:year/:genre/:input', async (req, res) => {
     const author = req.params.author;
-    const books = await Books.find({author: author}).exec();
-    res.send(books);
-})
-// filter and return a list of JSON objects of books based on the year
-app.get('/filterYear/:year', async (req, res) => {
     const year = req.params.year;
-    const books = await Books.find({year: year}).exec();
-    res.send(books);
-})
-// filter and return a list of JSON objects of books based on the genre
-app.get('/filterGenre/:genre', async (req, res) => {
     const genre = req.params.genre;
-    const books = await Books.find({genre: genre}).exec();
-    res.send(books);
+    const input = req.params.input;
+    if (author != "false" && year != "false" && genre != "false") {
+        const books = await Books.find({
+        $and: [
+            { author: author },
+            { year: year },
+            { genre: genre },
+            {
+            $or: [
+                { title: { $regex: input, $options: 'i' } },
+                { description: { $regex: input, $options: 'i' } }
+            ]
+            }
+            ]
+        }).exec();
+
+        res.send(books);
+    } else if (author != "false" && year != "false") {
+        const books = await Books.find({
+            $and: [
+                { author: author },
+                { year: year },
+                {
+                $or: [
+                    { title: { $regex: input, $options: 'i' } },
+                    { description: { $regex: input, $options: 'i' } }
+                ]
+                }
+                ]
+        }).exec();
+        res.send(books);
+    } else if (author != "false" && genre != "false") {
+        const books = await Books.find({
+            $and: [
+                { author: author },
+                { genre: genre },
+                {
+                $or: [
+                    { title: { $regex: input, $options: 'i' } },
+                    { description: { $regex: input, $options: 'i' } }
+                ]
+                }
+                ]
+        }).exec();
+        res.send(books);
+    } else if (year != "false" && genre != "false") {
+        const books = await Books.find({
+            $and: [
+                { year: year },
+                { genre: genre },
+                {
+                $or: [
+                    { title: { $regex: input, $options: 'i' } },
+                    { description: { $regex: input, $options: 'i' } }
+                ]
+                }
+                ]
+            }).exec();
+        res.send(books);
+    } else if (author != "false") {
+        const books = await Books.find({
+            $and: [
+                { author: author },
+                {
+                $or: [
+                    { title: { $regex: input, $options: 'i' } },
+                    { description: { $regex: input, $options: 'i' } }
+                ]
+                }
+                ]
+            }).exec();
+        res.send(books);
+    } else if (year != "false") {
+        const books = await Books.find({
+            $and: [
+                { year: year },
+                {
+                $or: [
+                    { title: { $regex: input, $options: 'i' } },
+                    { description: { $regex: input, $options: 'i' } }
+                ]
+                }
+                ]
+            }).exec();
+        res.send(books);
+    } else if (genre != "false") {
+        const books = await Books.find({
+            $and: [
+                { genre: genre },
+                {
+                $or: [
+                    { title: { $regex: input, $options: 'i' } },
+                    { description: { $regex: input, $options: 'i' } }
+                ]
+                }
+                ]
+            }).exec();
+        res.send(books);
+    } else {
+        const books = await Books.find({
+                $or: [
+                    { title: { $regex: input, $options: 'i' } },
+                    { description: { $regex: input, $options: 'i' } }
+                ]
+                }
+            ).exec();
+        res.send(books);
+    }
 })
 
 // route for getting all comments of the particular book
