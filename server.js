@@ -240,6 +240,8 @@ app.post('/likeComment', async (req, res) => {
 // can only comment once
 app.post('/rateandcomment', async (req, res) => {
     // check if the user has valid session
+    console.log(req.body.rating);
+    console.log(req.body.comment);
     const user = req.cookies.login;
     if (!user){
         res.redirect('/login.html');;
