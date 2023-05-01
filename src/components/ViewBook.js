@@ -17,7 +17,7 @@ function ViewBook(props) {
         })
         .catch((error) => console.error(error));
     }, 1000);
-  }, [props.id]);
+  }, [props.BookID]);
 
   if (loading) {
     return (

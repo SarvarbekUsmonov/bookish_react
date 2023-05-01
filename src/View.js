@@ -14,8 +14,8 @@ function View(){
     <div>
         <Navbar />
         <ViewBook BookID={BookID}/>
-        <Rateandcomment />
-        <Bookcomments /> 
+        <Rateandcomment BookID={BookID}/>
+        <Bookcomments bookId={BookID}/> 
     </div>
   )
 }
