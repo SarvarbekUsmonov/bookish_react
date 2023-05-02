@@ -26,16 +26,16 @@ function Login(){
     // }
     return(
         // create a form for the user to login
-        <div>
-            <div>Login</div>
+        <div id='loginPage'>
+            <div id='loginText'>Login</div>
             <form id="loginForm">
                 <label for="username">Username</label>
                 <input type="text" name="username" id="loginUsername" placeholder="Username" required></input>
                 <label for="password">Password</label>
                 <input type="password" name="password" id="loginPassword" placeholder="Enter Password Here" required></input>
-                {/* <button id="loginBtn" type="button" onclick = {handleLoginAccount}>Log in</button> */}
+                <button id="loginBtn" type="button">Log in</button>
+                <a href="./signUp" id='signupLink'>Don't have an account? Sign up here.</a>
             </form>
-            <a href="./signUp.html">Don't have an account? Sign up here.</a>
             <div id="copyrightDate">2023</div>
         </div>
     )

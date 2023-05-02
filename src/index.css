@@ -313,3 +313,84 @@ nav{
     transform: translate(100px,100px) rotate(112deg);
   }
 }
+
+
+
+#signupPage form{
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 30px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+#loginForm {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 30px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+#signupPage label{
+  display: block;
+  margin-top: 10px;
+}
+#loginForm label {
+  display: block;
+  margin-top: 10px;
+}
+
+#loginForm input, #signupPage input {
+  display: block;
+  margin-top: 5px;
+  padding: 10px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+#loginForm button, #signupPage button{
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#loginForm button:hover, #signupPage button:hover{
+  background-color: #0062cc;
+}
+
+#loginForm a, #signupPage a {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  color: #007bff;
+  text-decoration: none;
+}
+
+#loginForm a:hover, #signupPage a:hover {
+  text-decoration: underline;
+}
+
+#signupPage #copyrightDate, #loginPage #copyrightDate {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 12px;
+  color: #777;
+}
+
+#loginPage div, #signupPage div {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 50px;
+}
