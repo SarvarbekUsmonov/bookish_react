@@ -393,12 +393,11 @@ app.get('/comments/:bookId', async (req, res) => {
     console.log(comments);
 })
 
-// route for changing the avatr of the user
+// route for changing the avatar of the user
 app.post('/update/avatar', upload.single('newAvatar'), (req, res) => {
     const username = req.cookies.login.username;
     const fileName = req.file.filename;
     Users.updateOne({username}, {avatar: fileName}).exec();
-    res.redirect('/settings.html');
 });
 
 // post to change the password
