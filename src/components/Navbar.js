@@ -19,7 +19,7 @@ function Navbar(){
           src={require("../images/photo_2023-04-13 23.51.37.jpeg")}
         />
         <a className="navbar-brand">Bookish</a>
-        <form className="d-flex mx-auto" role="search" id="searchFormNavbar">
+        <form className="d-flex mx-auto search" role="search" id="searchFormNavbar">
           <input ref={navBarReact}
             id="search-bar"
             className="form-control  me-2 mx-2"
