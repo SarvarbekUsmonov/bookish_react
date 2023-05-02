@@ -324,6 +324,8 @@ nav{
   margin-top: 30px;
   max-width: 400px;
   margin: 0 auto;
+  opacity: 0;
+  animation: fadeIn ease-in 1s forwards;
 }
 #loginForm {
   background-color: #fff;
@@ -333,6 +335,8 @@ nav{
   margin-top: 30px;
   max-width: 400px;
   margin: 0 auto;
+  opacity: 0;
+  animation: fadeIn ease-in 1s forwards;
 }
 #signupPage label{
   display: block;
@@ -393,4 +397,13 @@ nav{
   font-weight: bold;
   text-align: center;
   margin-top: 50px;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
