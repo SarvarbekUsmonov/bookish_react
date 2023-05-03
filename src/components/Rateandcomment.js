@@ -1,41 +1,44 @@
 import React, { useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 function Rateandcomment() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const commentRef = useRef();
 
+  const location = useLocation();
+  const qP = new URLSearchParams(location.search);
+  const BookID = qP.get('BookID');
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // prevent form submission and page reload
+    userCheck();
+  };
+
   const handleStarClick = (e) => {
     const newRating = parseInt(e.currentTarget.dataset.value, 10);
     setRating(newRating);
   };
-
   const handleCommentChange = (e) => {
     setComment(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const response = await fetch("http://localhost:4000/rateandcomment", {
+    
+
+  async function userCheck(){
+    fetch("http://localhost:4000/rateandcomment", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ rating: rating, comment: comment }),
-    });
-
-    if (response.ok) {
-      // Handle success
-      console.log("Success");
-      setRating(0);
-      setComment("");
-      commentRef.current.value = "";
-    } else {
-      // Handle error
-      console.log("Error");
-    }
-  };
+      body: JSON.stringify({ rating: rating, comment: comment, bookId: BookID }),
+    })
+    setRating(0);
+    commentRef.current.value = '';
+  }
 
   return (
     <div className="container">
@@ -65,6 +68,7 @@ function Rateandcomment() {
                 ref={commentRef}
               ></textarea>
             </div>
+            {/* <button type="submit" className="btn btn-primary" onClick={userCheck}> */}
             <button type="submit" className="btn btn-primary">
               Submit
             </button>

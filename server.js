@@ -6,6 +6,10 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer')
 const cors = require('cors');
 
+const {Hash} = require('crypto');
+const crypto = require('crypto')
+
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, __dirname + '/private_html/image')
@@ -19,11 +23,33 @@ const upload = multer({ storage: storage });
 const app = express();
 const port = 4000;
 
-app.use(cookieParser())
 app.use("/*.html", authenticate);
 app.use(express.static('public_html'));
 app.use(express.json());
-app.use(cors());
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Credentials", "true"); // Add this line
+    next();
+  });
+// app.use(cors({
+//     origin: ['http://localhost:3000'],
+//     methods: ["GET", "POST"],
+//     credentials: true
+
+//   }));
+
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended: true}));
+
+// app.use(session({
+//     key: userId,
+//     secret: "subscribe",
+//     resave: false,
+//     saveUnitialized: false,
+//     cookie: {expires:}
+// }))
 
 // connection to the database
 const mongoURL = 'mongodb://127.0.0.1:27017/quizzy';
@@ -39,8 +65,8 @@ const usersSchema = new Schema({
     username: String,
     salt: Number,
     hash: String,
-    favorites: [mongoose.ObjectId],
-    listings: [mongoose.ObjectId],
+    favorites: [String],
+    listings: [String],
     avatar: String
 })
 
@@ -50,7 +76,7 @@ let Users = mongoose.model("Users", usersSchema);
 const booksSchema = new mongoose.Schema({
     title: String,
     author: String,
-    comments: [mongoose.ObjectId],
+    comments: [String],
     rating: [Number],
     year: Number,
     genre: String,
@@ -62,11 +88,11 @@ const booksSchema = new mongoose.Schema({
 let Books = mongoose.model("Books", booksSchema);
 
 const commentsSchema = new mongoose.Schema({
-    user: mongoose.ObjectId,
+    user: String,
     rating: Number,
     comment: String,
     date: Date,
-    likes: [mongoose.ObjectId],
+    likes: [String],
 });
 
 let Comments = mongoose.model("Comments", commentsSchema);
@@ -99,10 +125,12 @@ function authenticate(req, res, next) {
 
 function addSession(req, res) {
     const username = req.body.username;
+    console.log(username)
     if (username){
+        console.log(user);
         let sessionId = Math.floor(Math.random() * 10000);
         sessionKeys[username] = [sessionId, Date.now()];
-        res.cookie("login", { username: username, sessionId: sessionId }, { maxAge: period });
+        res.cookie("login", { userName: username, sessionID: sessionId }, { maxAge: period });
     }
 }
 
@@ -152,13 +180,36 @@ app.post('/login', async (req, res) => {
     let data = hash2.update(toHash, 'utf-8');
     let gen_hash = data.digest('hex');
     if (gen_hash === hash) {
-        addSession(req, res);
-        res.sendStatus(200);
+        const username = req.body.username;
+        console.log(username)
+        if (username){
+            console.log(username);
+            let sessionId = Math.floor(Math.random() * 10000);
+            console.log(sessionId);
+            sessionKeys[username] = [sessionId, Date.now()];
+            console.log(sessionId);
+            res.cookie("login", { userName: username, sessionID: sessionId }, { maxAge: 3000000, httpOnly : false });
+            res.end()
+        }
     } else {
         console.log('INCORRECT PASSWORD');
         res.sendStatus(404);
     }
 })
+
+// app.get('/currentUser', async (req, res) => {
+//     console.log(req.cookies)
+//     const user = req.cookies.login.userName;
+//     const book = await Users.findOne({username: user}).exec();
+//     console.log(book);
+//     console.log(book._id.toString())
+//     const userId = book._id.toString();
+//     if (user) {
+//       res.json({ user: userId });
+//     } else {
+//       res.status(404).json({ error: 'User not found' });
+//     }
+//   });
 // route for posting a book
 app.post('/post', async (req, res) => {
     console.log(req.body)
@@ -239,37 +290,44 @@ app.post('/likeComment', async (req, res) => {
 // returns JSon like {"added": true}, or {"added": false} if the user has already commented, the user
 // can only comment once
 app.post('/rateandcomment', async (req, res) => {
-    // check if the user has valid session
-    console.log(req.body.rating);
-    console.log(req.body.comment);
-    const user = req.cookies.login;
-    if (!user){
-        res.redirect('/login.html');;
-    }
-    else{
-        const userId = req.body.userId;
+    try {
+        console.log(req.cookies);
+        const userCookie = req.cookies.login.userName;
+        if (!userCookie) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const user = await Users.findOne({ username: userCookie }).exec();
+        console.log(user);
+        console.log(user._id.toString());
+        const userId = user._id.toString();
+
         const rating = req.body.rating;
         const comment = req.body.comment;
         const bookId = req.body.bookId;
+        console.log(bookId);
         const book = await Books.findById(bookId).exec();
         const comments = book.comments;
-        // check if the user has already commented
-        for (let i = 0; i < comments.length; i++) {
-            const comment = await Comments.findById(comments[i]).exec();
-            if (comment.user == userId) {
-                res.send({added: false});
-                return;
-            }
-        }
+
+        console.log(bookId);
         // if the user has not commented, then add the comment
-        const newComment = new Comments({user: userId, rating, comment, likes: []});
+        const newComment = new Comments({
+            user: userId.toString(),
+            rating,
+            comment,
+            likes: []
+        });
         await newComment.save();
-        comments.push(newComment._id);
-        book.comments = comments;
-        await book.save();
-        res.send({added: true});
+        comments.push(newComment._id.toString());
+        console.log(comments);
+        console.log(bookId)
+        await Books.updateOne({ _id: bookId}, { $set: { comments: comments } });
+        console.log('it reached here');
+        res.end();
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
-})
+});
 // post route for favourting a book
 // body of the request contains the userId and the bookId
 // returns {"added": true} if the book is added to the favourites, {"added": false} if the book is already in the favourites
